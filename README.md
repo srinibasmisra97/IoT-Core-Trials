@@ -26,3 +26,15 @@ python sample.py \
 ```
 
 To know about the sample code, check [this](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/iot/api-client/mqtt_example).
+
+## Command Sender Code
+
+To send command through the sender:
+```bash
+python command_sender.py \
+--project dev-trials-project \
+--region asia-east1 \
+--registry iot-device-registry \
+--device device-1 \
+--command "test command for device 1"
+```
