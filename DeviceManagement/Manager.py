@@ -1,9 +1,11 @@
 import os
-import json
+import random
+import string
 
 from google.cloud import iot_v1
 from google.api_core import exceptions
-from google.protobuf.json_format import MessageToJson
+from RSA.RSACipher import RSACipher
+from AES.AESCipher import AESCipher
 
 
 class DeviceManager:
@@ -48,11 +50,20 @@ class DeviceManager:
                 "log_level": str(device.log_level)
             }
 
+            RSAObject = RSACipher()
+            RSAObject.set_public_key(public_key_file="keys/RSA/public.pem")
+
             for credential in device.credentials:
+                aes_key = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=20))
+                encrypted_key = RSAObject.encrypt(plain_text=aes_key)
+                AESObject = AESCipher(key=aes_key)
+                encrypted_public_key_file = AESObject.encrypt(plain_text=credential.public_key.key)
+
                 device_data["credentials"].append({
                     "public_key": {
                         "format": "RSA_X509_PEM",
-                        "key": credential.public_key.key
+                        "key": encrypted_public_key_file,
+                        "secret": encrypted_key
                     },
                     "expiration_time": {}
                 })
@@ -142,40 +153,3 @@ class DeviceManager:
             return {"success": False, "message": "unauthorized"}
         except exceptions.PermissionDenied:
             return {"success": False, "message": "permission denied"}
-
-
-# if __name__ == '__main__':
-#     manager = DeviceManager(service_account_file_path="../configs/iot-device-publish.json",
-#                             project_id="dev-trials-project",
-#                             cloud_region="asia-east1",
-#                             registry_id="iot-device-registry")
-
-    # device, state = manager.get_device(device_id="device-0")
-    # if state['success']:
-    #     print(device)
-    # else:
-    #     print(state['message'])
-
-    # devices, state = manager.list_devices()
-    # if state['success']:
-    #     print(devices)
-    # else:
-    #     print(state['message'])
-
-    # device_state, state = manager.list_device_states(device_id="device-0")
-    # if state['success']:
-    #     print(device_state)
-    # else:
-    #     print(state['message'])
-
-    # device_states, state = manager.list_device_states(device_id="device-0", history=True)
-    # if state['success']:
-    #     print(device_states)
-    # else:
-    #     print(state['message'])
-
-    # result = manager.create_device(device_id="device-2", public_key=open("../keys/public_key.pub", 'r').read())
-    # print(result)
-
-    # result = manager.delete_device(device_id="device-2")
-    # print(result)
