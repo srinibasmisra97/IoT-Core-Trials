@@ -3,9 +3,15 @@ Repository for IoT Core Trials.
 
 ## Sample Code
 
-Generate the public, private key pair.
+Generate the public, private key pair. This would be used for device authentication with GCP.
 ```bash
 openssl req -x509 -newkey rsa:2048 -keyout private_key.pem -nodes -out public_key.pub -subj "/CN=unused"
+```
+
+Generate a RSA public private key pair which would be used to encrypt public keys that would be sent in the request data.
+```bash
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 ```
 
 Use the public key to register a new device on to the IoT Core Registry.
