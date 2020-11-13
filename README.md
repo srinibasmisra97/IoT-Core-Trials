@@ -101,7 +101,7 @@ Both the AES encrypted Public Key and the RSA encrypted secret key would be sent
 
 ## Device Setup
 
-device_setup.py would be used by the device to register into the device registry.
+[device_setup.py](device_setup.py) would be used by the device to register into the device registry.
 
 ## API Server
 
@@ -165,3 +165,6 @@ Response:
   "success": true
 }
 ```
+
+## Device Code
+After the device setup is completed, we can start the device code by running [device.py](device.py).
