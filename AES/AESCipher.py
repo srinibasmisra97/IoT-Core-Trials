@@ -36,3 +36,18 @@ class AESCipher(object):
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         plain_text = cipher.decrypt(encrypted_text[self.block_size:]).decode("utf-8")
         return self.__unpad(plain_text)
+
+
+if __name__ == '__main__':
+    key = input("Enter AES Key: ")
+    aes = AESCipher(key=key)
+
+    choice = input("Enter E to encrypt and D to decrypt: ")
+    if choice == "E":
+        data = input("Enter data to encrypt: ")
+        print("Encrypted Data: \n{}\n".format(aes.encrypt(plain_text=data)))
+    elif choice == "D":
+        data = input("Enter data to decrypt: ")
+        print("Decrypted Data: \n{}\n".format(aes.decrypt(encrypted_text=data)))
+    else:
+        print("INVALID CHOICE")
