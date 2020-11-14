@@ -45,20 +45,6 @@ python command_sender.py \
 --command "test command for device 1"
 ```
 
-2. __POST /device__
-To add a new device to the registry.
-Request:
-```json
-{
-    "id": "device-1",
-    "secret": "1d6fd0dc6c56e736593e43996607f210e49abd8d4d2f41e8fe3bc17bd2ed54e61a2ed43c08dd7b80a61c0ae1b41aef9127b9c5b97d8bbee1426ad72653722ab80753237df9332217d1f70bf4ee13cbb3e2f410ae3dd8592fc522c4c2ae83d37ea9652658660693d4a61ec63df1e0dc45f9fed90acf1ac215b4b19e6d7f2e3faf6f85a2d7f04d89627c15c75094240b556030b56846d27ef12bf2cb97d5e9f296f4df43fd744e055328a60ecd8c78d4734ecf7a98646e945e3338e2ccbba863809fdafba769c1a7ac0f157de408f476f1dc48095745cc806d5a3841843ec7e65eb9cae4f9bc4f1520edb7d5ea0d084346bc1107422acd17b2b2e80d7ea7c78ed9",
-    "key": "/IyfK+qs7Uc1JuYznRDGZoQselJuIcm/khO0Jx/I9NFMQ639E8ue25n8KbuNKBQ68XwXIkozPzu2+Bx2TSde83KzsOSLn0cS18E5U+/FBm1mxJ7/UUp+f0MZEpYPS30GtXOgupPZzOQrWCZgj/1yH3jrFFVs+P48XOdSzAizYDCJhsshQAXEtsQzMGxuE+FL+gIqCtiYnZylw8uLVk3BkhqGRnanPwN2fLREqRwDN6eDcw+3qZt2oSRLtSPSjHy4JCSFta49YvQHqmR1IKBnDbZYbcsQQql3DsnBqsQDFWA2TYeddkLhXWRYZ6OMthdHzJy/Rjs+lnyvjmNi/zyxHATogjusu69RwzSgZH/lFpEDwgAtuEiNYHKtTDYosJC0JUZ8gA3+Umjl5DIRy/G4nb1AEiGxHpg5t4FmwDlehazfxLIwE2T2lZHmmKTphNtYAUB22eK/siDTD9u5x3xED92HKOyvmi+wXyItlS4EUCVMywzCLOXTEaaqKM7QNhAjTECynUBtYilMGeu7nl7YD6OdOAvdARBw6p4nHeS9o5uCfvkKhEqIXmpc+gVM/3CjNAc/vPrvEKrohsWNOiHqeN5f9B9bBeezGLUVS4kZfRHybfu3XJKQpBfxHjMEF1yGteFVZUp9aDpVjRQ7KZMIWtq1vKDqGogOIKJz2Zbm9nbwzcVDHarWhsuE6e6nFokyeBZVxrGQ1FeVx6MnoTFit3LMN6eZH9908uYgIIf+dpb1XFaCP0V6ACEI4kdN18ZX/FU3FiSKrxYWu+d2HdMcij3YTTPNGqGQpRd8VItX2mrE4tAumywt+Zp2maaxX2Ku2gqaZ4YuaTsaPqkvKPkmHiOaly9aZx27QBWwsIqSAa19K6grMtxbQJ34KSJnipi+s3lvsZ4cqcpVvMrve1f2THQWx0vscN9+hIC7ZGdAn9psw1LonHwY5mnmq/+JzOqZjeLLr3MgiHVJVMEFsDzR5RX5M7iqXPnsuPUYIKHPSKd5GtmuGPNzf6v1/gJ6v0v0iStU6XPS5L4Fgo65RsVmEdQ2UgHsP2yWUXHBSJ7ydi4T2vViGjRpGSUa0QXI6F+fm5KMCDueyUBdCQw3G5mTRkhXTJ/yOuZwPlRxNTSykoBfHht6UjzXjXuZY1ADCZYUoLxHVvb5yb/zuDpk52YJUuGhTzmwfHpDwm7lPRmFH69iQmdNGL/VFy1zM4cNBBqfQmqqGDr2dVCWH00oL4i7+Tvb5cwdGYm3641UYL7QFagrWYh/5L0RICZWOJjFxH4OYHQgVXDRRWsGUpvnq2Yke4ivIqxf/Ihnbp50ixsCU3E="
-}
-```
-
-3. __DELETE /device?id=<device-id>__
-To delete a device from the registry.
-
 ## AES Encryption
 [AESCipher.py](AES/AESCipher.py) can be used to perform the AES encryption.
 
@@ -101,7 +87,8 @@ decrypted_data = rsa.decrypt(encrypted_text="<your-encrypted-data>")
 ## Encryption Mechanism
 General encryption flow used here for the public keys to be sent is,
 1. Generate a random string to be used for AES as a secret key.
-2. Encrypt the random AES secret key with RSA.
+2. Encrypt the public key using AES and the generated secret key.
+3. Encrypt the random AES secret key with RSA.
 
 Both the AES encrypted Public Key and the RSA encrypted secret key would be sent.
 
@@ -171,6 +158,21 @@ Response:
   "success": true
 }
 ```
+
+
+2. __POST /device__
+To add a new device to the registry.
+Request:
+```json
+{
+    "id": "device-1",
+    "secret": "1d6fd0dc6c56e736593e43996607f210e49abd8d4d2f41e8fe3bc17bd2ed54e61a2ed43c08dd7b80a61c0ae1b41aef9127b9c5b97d8bbee1426ad72653722ab80753237df9332217d1f70bf4ee13cbb3e2f410ae3dd8592fc522c4c2ae83d37ea9652658660693d4a61ec63df1e0dc45f9fed90acf1ac215b4b19e6d7f2e3faf6f85a2d7f04d89627c15c75094240b556030b56846d27ef12bf2cb97d5e9f296f4df43fd744e055328a60ecd8c78d4734ecf7a98646e945e3338e2ccbba863809fdafba769c1a7ac0f157de408f476f1dc48095745cc806d5a3841843ec7e65eb9cae4f9bc4f1520edb7d5ea0d084346bc1107422acd17b2b2e80d7ea7c78ed9",
+    "key": "/IyfK+qs7Uc1JuYznRDGZoQselJuIcm/khO0Jx/I9NFMQ639E8ue25n8KbuNKBQ68XwXIkozPzu2+Bx2TSde83KzsOSLn0cS18E5U+/FBm1mxJ7/UUp+f0MZEpYPS30GtXOgupPZzOQrWCZgj/1yH3jrFFVs+P48XOdSzAizYDCJhsshQAXEtsQzMGxuE+FL+gIqCtiYnZylw8uLVk3BkhqGRnanPwN2fLREqRwDN6eDcw+3qZt2oSRLtSPSjHy4JCSFta49YvQHqmR1IKBnDbZYbcsQQql3DsnBqsQDFWA2TYeddkLhXWRYZ6OMthdHzJy/Rjs+lnyvjmNi/zyxHATogjusu69RwzSgZH/lFpEDwgAtuEiNYHKtTDYosJC0JUZ8gA3+Umjl5DIRy/G4nb1AEiGxHpg5t4FmwDlehazfxLIwE2T2lZHmmKTphNtYAUB22eK/siDTD9u5x3xED92HKOyvmi+wXyItlS4EUCVMywzCLOXTEaaqKM7QNhAjTECynUBtYilMGeu7nl7YD6OdOAvdARBw6p4nHeS9o5uCfvkKhEqIXmpc+gVM/3CjNAc/vPrvEKrohsWNOiHqeN5f9B9bBeezGLUVS4kZfRHybfu3XJKQpBfxHjMEF1yGteFVZUp9aDpVjRQ7KZMIWtq1vKDqGogOIKJz2Zbm9nbwzcVDHarWhsuE6e6nFokyeBZVxrGQ1FeVx6MnoTFit3LMN6eZH9908uYgIIf+dpb1XFaCP0V6ACEI4kdN18ZX/FU3FiSKrxYWu+d2HdMcij3YTTPNGqGQpRd8VItX2mrE4tAumywt+Zp2maaxX2Ku2gqaZ4YuaTsaPqkvKPkmHiOaly9aZx27QBWwsIqSAa19K6grMtxbQJ34KSJnipi+s3lvsZ4cqcpVvMrve1f2THQWx0vscN9+hIC7ZGdAn9psw1LonHwY5mnmq/+JzOqZjeLLr3MgiHVJVMEFsDzR5RX5M7iqXPnsuPUYIKHPSKd5GtmuGPNzf6v1/gJ6v0v0iStU6XPS5L4Fgo65RsVmEdQ2UgHsP2yWUXHBSJ7ydi4T2vViGjRpGSUa0QXI6F+fm5KMCDueyUBdCQw3G5mTRkhXTJ/yOuZwPlRxNTSykoBfHht6UjzXjXuZY1ADCZYUoLxHVvb5yb/zuDpk52YJUuGhTzmwfHpDwm7lPRmFH69iQmdNGL/VFy1zM4cNBBqfQmqqGDr2dVCWH00oL4i7+Tvb5cwdGYm3641UYL7QFagrWYh/5L0RICZWOJjFxH4OYHQgVXDRRWsGUpvnq2Yke4ivIqxf/Ihnbp50ixsCU3E="
+}
+```
+
+3. __DELETE /device?id=<device-id>__
+To delete a device from the registry.
 
 ## Device Code
 After the device setup is completed, we can start the device code by running [device.py](device.py).
